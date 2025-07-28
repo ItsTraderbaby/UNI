@@ -1,6 +1,6 @@
-# UNI System Architecture – CGEI Engine
+# •UNI• – The World’s First Conversational Generative Emotion Interface (CGEI)
 
-This document outlines the technical architecture for UNI — the first Conversational Generative Emotion Interface (CGEI). The goal is to define how text, emotion, AI, and generative art work together in real-time to power the UNI experience.
+This document outlines the technical architecture for •UNI• — the first Conversational Generative Emotion Interface (CGEI). The goal is to define how text, emotion, AI, and generative art work together in real-time to power the •UNI• experience.
 
 ---
 
@@ -16,10 +16,10 @@ This document outlines the technical architecture for UNI — the first Conversa
 | Frontend | Flutter OR React Native | Cross-platform mobile UI (iOS + Android) |
 | Realtime DB | Firebase / Supabase | Messaging, auth, presence |
 | Emotion Analysis | Google Cloud Natural Language | Detects sentiment & emotion |
-| LLM Response | OpenAI GPT-4 | Drives UNI persona’s voice |
+| LLM Response | OpenAI GPT-4 | Drives •UNI• persona’s voice |
 | Visual Generation | DALL·E OR Stable Diffusion | Generates full-screen scenes, memory visuals |
-| Audio Generation | Google Cloud TTS (optional) | Spoken UNI responses |
-| Canvas Animation | WebGL, Unity, or p5.js | Bubble morphing, ambient animation |
+| Audio Generation | Google Cloud TTS (optional) | Spoken •UNI• responses |
+| Canvas Animation | WebGL, •UNI•ty, or p5.js | Bubble morphing, ambient animation |
 
 ---
 
@@ -41,11 +41,11 @@ This document outlines the technical architecture for UNI — the first Conversa
 - Triggers:
   - Visual scene generation
   - Bubble animation effects
-  - UNI tone modulation
+  - •UNI• tone modulation
 
 ---
 
-## 🎭 3. UNI Persona (LLM Response)
+## 🎭 3. •UNI• Persona (LLM Response)
 
 - GPT-4 generates brief, in-character responses after each message
 - Prompt includes:
@@ -75,7 +75,7 @@ This document outlines the technical architecture for UNI — the first Conversa
 
 - Built using:
   - WebGL custom shaders, OR
-  - Unity particle system overlay
+  - •UNI•ty particle system overlay
 - Visuals adapt based on:
   - Message emotion
   - Message type (text, photo, celebration)
@@ -86,7 +86,7 @@ This document outlines the technical architecture for UNI — the first Conversa
 ## 🔈 6. Optional Voice Layer
 
 - Google Cloud TTS  
-- UNI lines converted to audio (animated lips / sound waves optional)
+- •UNI• lines converted to audio (animated lips / sound waves optional)
 - Users can toggle ON/OFF in settings
 
 ---
@@ -96,7 +96,7 @@ This document outlines the technical architecture for UNI — the first Conversa
 - End-to-end encrypted chat (Firebase + optional Signal Protocol)
 - Memory Cards are stored privately (not public)
 - No data is used to train models
-- UNI does not store permanent chat logs beyond user-owned content
+- •UNI• does not store permanent chat logs beyond user-owned content
 
 ---
 
@@ -119,6 +119,6 @@ This document outlines the technical architecture for UNI — the first Conversa
 
 ## 🧠 Summary
 
-UNI combines AI, emotion, and generative art into a real-time communication engine.  
-By structuring every message as an input to sentiment, scene, and character pipelines, UNI builds a dynamic, emotionally intelligent interface — the foundation of CGEI.
+•UNI• combines AI, emotion, and generative art into a real-time comm•UNI•cation engine.  
+By structuring every message as an input to sentiment, scene, and character pipelines, •UNI• builds a dynamic, emotionally intelligent interface — the foundation of CGEI.
 
