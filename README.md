@@ -1,2 +1,2 @@
 # •UNI•
-The world's first generative AI chat canvas for emotional connection.
+•UNI• (you-n-eye) is the world’s first CGEI — Conversational Generative Emotion Interface — turning two-person text chats into expressive, animated, AI-powered visual stories.
