@@ -1,2 +1,3 @@
-# •UNI•
-•UNI• (you-n-eye) is the world’s first CGEI — Conversational Generative Emotion Interface — turning two-person text chats into expressive, animated, AI-powered visual stories.
+# •UNI• – The World’s First Conversational Generative Emotion Interface (CGEI)
+
+Welcome to •UNI• (pronounced “you-n-eye”) — the world’s first chat experience where every conversation is living art, and emotion is the interface.
