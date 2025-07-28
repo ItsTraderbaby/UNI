@@ -1,3 +1,4 @@
-<p align="center">
-  <img src="assets/uni_logo.svg" width="120" alt="•UNI• logo"/>
-</p>
+<!-- Save this as uni_logo.svg -->
+<svg width="120" height="50" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#000">•UNI•</text>
+</svg>
