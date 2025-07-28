@@ -1,6 +1,6 @@
-# UNI Product & Technology Roadmap
+# •UNI• Product & Technology Roadmap
 
-This roadmap lays out the phased plan for UNI, the world’s first Conversational Generative Emotion Interface (CGEI).  
+This roadmap lays out the phased plan for •UNI•, the world’s first Conversational Generative Emotion Interface (CGEI).  
 It covers the MVP journey, launch milestones, and scale-up to CGEI platform leader.
 
 ---
@@ -14,7 +14,7 @@ It covers the MVP journey, launch milestones, and scale-up to CGEI platform lead
 
 - 🔜 **Week 2:**  
   - Google Cloud NLP emotion analysis  
-  - UNI persona (text-only via GPT-4)  
+  - •UNI• persona (text-only via GPT-4)  
   - Dynamic chat bubbles (morph with tone)
 
 - 🔜 **Week 3:**  
@@ -33,18 +33,18 @@ It covers the MVP journey, launch milestones, and scale-up to CGEI platform lead
 
 - Closed beta with target users (LDR couples, friends)
 - Collect emotional feedback (voice/video surveys)
-- Refine UNI’s tone, art prompts, and memory flow
-- Announce UNI + CGEI category to press/VCs
+- Refine •UNI•’s tone, art prompts, and memory flow
+- Announce •UNI• + CGEI category to press/VCs
 - Waitlist opens, viral invite loop, TikTok/Reddit seeding
 
-**Goal:** Validate UNI creates *real emotional lift* in user pairs (NPS > 60)
+**Goal:** Validate •UNI• creates *real emotional lift* in user pairs (NPS > 60)
 
 ---
 
-## 🟣 Phase 3: Productization & UNI Plus (Months 3–9)
+## 🟣 Phase 3: Productization & •UNI• Plus (Months 3–9)
 
-- Launch UNI Plus (subscriptions)
-- Add UNI voice layer (Google TTS)
+- Launch •UNI• Plus (subscriptions)
+- Add •UNI• voice layer (Google TTS)
 - Unlock custom avatars and visual themes
 - Enhanced Memory Deck (timeline, chaptering)
 - First print-on-demand IRL memory product
@@ -53,7 +53,7 @@ It covers the MVP journey, launch milestones, and scale-up to CGEI platform lead
 
 ## 🟡 Phase 4: CGEI Platform Scale (Year 1+)
 
-- UNI SDK/API for partner apps (dating, wellness, therapy)
+- •UNI• SDK/API for partner apps (dating, wellness, therapy)
 - Group chat (with emotional blending)
 - On-device AI model migration (lower latency, higher privacy)
 - Global events (Valentine’s, “Year in Review”)
@@ -66,21 +66,21 @@ It covers the MVP journey, launch milestones, and scale-up to CGEI platform lead
 - D7 retention > 35%
 - Avg. daily messages/user > 12
 - Memory Cards/user/week > 1
-- UNI interjection in > 80% of chats
+- •UNI• interjection in > 80% of chats
 - Waitlist > 10K in first 3 months
-- $100K ARR from UNI Plus by Month 12
+- $100K ARR from •UNI• Plus by Month 12
 
 ---
 
 ## 🏁 The End Game: Own the CGEI Category
 
-- UNI becomes the standard for emotional chat UI worldwide
+- •UNI• becomes the standard for emotional chat UI worldwide
 - Licensing + SDK revenues surpass B2C subscriptions
 - First-mover status secures global IP
-- Every major chat app copies or partners with UNI tech
+- Every major chat app copies or partners with •UNI• tech
 
 ---
 
-# UNI isn’t just a product.
+# •UNI• isn’t just a product.
 ## It’s the *new language* of digital emotion.
 
