@@ -1,7 +1,14 @@
-# •UNI• Product & Technology Roadmap
+<p align="center">
+  <strong style="font-size: 2em; letter-spacing: 0.1em;">•UNI•</strong><br>
+  <em>The World’s First Conversational Generative Emotion Interface (CGEI)</em>
+</p>
 
-This roadmap lays out the phased plan for •UNI•, the world’s first Conversational Generative Emotion Interface (CGEI).  
-It covers the MVP journey, launch milestones, and scale-up to CGEI platform leader.
+---
+
+Welcome to <strong>•UNI•</strong> (pronounced “you-n-eye”) — a messaging experience that turns every conversation into living art, powered by emotion, AI, and human connection.
+
+> <strong>•UNI•</strong> is not just a chat app.
+> It’s a new interface for feeling, remembering, and sharing — where the canvas of every message is finally alive.
 
 ---
 
