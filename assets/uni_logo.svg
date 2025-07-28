@@ -1,4 +1,3 @@
-<!-- Save this as uni_logo.svg -->
-<svg width="120" height="50" xmlns="http://www.w3.org/2000/svg">
-  <text x="10" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#000">•UNI•</text>
+<svg width="150" height="50" xmlns="http://www.w3.org/2000/svg">
+  <text x="50%" y="50%" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#181818" text-anchor="middle" alignment-baseline="central">•UNI•</text>
 </svg>
