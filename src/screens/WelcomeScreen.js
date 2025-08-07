@@ -1,20 +1,26 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
-const WelcomeScreen = ({ navigation }) => (
-  <View style={styles.container}>
-    <Text style={styles.title}>Welcome to •UNI•</Text>
-    <Text style={styles.subtitle}>The first CGEI – chat that feels.</Text>
-    <Button title="Login" onPress={() => navigation.navigate('Login')} />
-    <Button title="Sign Up" onPress={() => navigation.navigate('SignUp')} />
-  </View>
-);
+export default function WelcomeScreen({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome to •UNI•</Text>
+      <Button title="Log In" onPress={() => navigation.navigate('Login')} />
+      <Button title="Sign Up" onPress={() => navigation.navigate('SignUp')} />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
-  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 16 },
-  subtitle: { fontSize: 18, marginBottom: 32 },
+  container: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    padding: 20 
+  },
+  title: { 
+    fontSize: 32, 
+    marginBottom: 20, 
+    textAlign: 'center' 
+  },
 });
-
-export default WelcomeScreen;
-

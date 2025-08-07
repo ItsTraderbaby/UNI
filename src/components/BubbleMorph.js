@@ -1,71 +1,102 @@
-import React, { useState } from 'react';
-import { Animated, TouchableOpacity, Text, StyleSheet } from 'react-native';
+// src/components/BubbleMorph.js
 
-const BubbleMorph = ({ text, emotion = 'neutral' }) => {
-  const [scale] = useState(new Animated.Value(1));
-  const [shake] = useState(new Animated.Value(0));
+import React, { useRef, useEffect } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 
-  const animate = () => {
-    if (emotion === 'love') {
-      Animated.sequence([
-        Animated.spring(scale, { toValue: 1.15, useNativeDriver: true }),
-        Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
-      ]).start();
-    } else if (emotion === 'anger') {
-      Animated.sequence([
-        Animated.timing(shake, { toValue: 10, duration: 50, useNativeDriver: true }),
-        Animated.timing(shake, { toValue: -10, duration: 50, useNativeDriver: true }),
-        Animated.timing(shake, { toValue: 0, duration: 50, useNativeDriver: true }),
-      ]).start();
-    } else if (emotion === 'funny') {
-      Animated.sequence([
-        Animated.timing(scale, { toValue: 1.2, duration: 70, useNativeDriver: true }),
-        Animated.timing(scale, { toValue: 0.9, duration: 70, useNativeDriver: true }),
-        Animated.timing(scale, { toValue: 1, duration: 70, useNativeDriver: true }),
-      ]).start();
+/**
+ * BubbleMorph
+ *
+ * An animated message bubble that morphs based on sentiment:
+ * - 'happy': gentle pulsing
+ * - 'sad': subtle shrink/stretch
+ * - 'angry': horizontal shake
+ * - 'neutral': static
+ *
+ * Props:
+ * - message: string — the text to display
+ * - isSender: boolean — aligns bubble left or right
+ * - sentiment: 'happy' | 'sad' | 'angry' | 'neutral'
+ */
+export default function BubbleMorph({ message, isSender, sentiment }) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    let animation;
+    switch (sentiment) {
+      case 'happy':
+        animation = Animated.loop(
+          Animated.sequence([
+            Animated.timing(scaleAnim, { toValue: 1.05, duration: 800, useNativeDriver: true }),
+            Animated.timing(scaleAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+          ])
+        );
+        break;
+
+      case 'sad':
+        animation = Animated.loop(
+          Animated.sequence([
+            Animated.timing(scaleAnim, { toValue: 0.95, duration: 800, useNativeDriver: true }),
+            Animated.timing(scaleAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+          ])
+        );
+        break;
+
+      case 'angry':
+        animation = Animated.loop(
+          Animated.sequence([
+            Animated.timing(shakeAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
+            Animated.timing(shakeAnim, { toValue: -1, duration: 100, useNativeDriver: true }),
+            Animated.timing(shakeAnim, { toValue: 0, duration: 100, useNativeDriver: true }),
+          ])
+        );
+        break;
+
+      default:
+        // neutral: no animation
+        animation = null;
     }
-  };
+
+    if (animation) animation.start();
+    return () => animation && animation.stop();
+  }, [sentiment, scaleAnim, shakeAnim]);
+
+  // Convert shakeAnim to translateX
+  const translateX = shakeAnim.interpolate({
+    inputRange: [-1, 1],
+    outputRange: [-5, 5],
+  });
 
   return (
-    <TouchableOpacity onPress={animate} activeOpacity={0.8}>
-      <Animated.View
-        style={[
-          styles.bubble,
-          {
-            backgroundColor:
-              emotion === 'love'
-                ? '#ffe0ec'
-                : emotion === 'anger'
-                ? '#ffe3e0'
-                : emotion === 'funny'
-                ? '#e0f7fa'
-                : '#f0f0f0',
-            transform: [
-              { scale },
-              { translateX: shake },
-            ],
-          },
-        ]}
-      >
-        <Text style={styles.text}>{text}</Text>
-      </Animated.View>
-    </TouchableOpacity>
+    <Animated.View
+      style={[
+        styles.bubble,
+        isSender ? styles.sender : styles.receiver,
+        { transform: sentiment === 'angry' ? [{ translateX }] : [{ scale: scaleAnim }] },
+      ]}
+    >
+      <Text style={styles.text}>{message}</Text>
+    </Animated.View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   bubble: {
-    padding: 16,
-    borderRadius: 24,
-    margin: 8,
+    marginVertical: 4,
+    padding: 10,
+    borderRadius: 16,
+    maxWidth: '75%',
+    backgroundColor: '#fff',
+  },
+  sender: {
+    backgroundColor: '#dcf8c6',
+    alignSelf: 'flex-end',
+  },
+  receiver: {
+    backgroundColor: '#ffffff',
     alignSelf: 'flex-start',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   text: {
     fontSize: 16,
   },
 });
-
-export default BubbleMorph;
