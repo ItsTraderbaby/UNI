@@ -8,7 +8,7 @@ import { getFirestore } from 'firebase/firestore';
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDZz5e2lH2RLo-lmefZJPWW2PjyfhL4P6k",
-    authDomain: "uni-mvp.firebaseapp.com",s
+    authDomain: "uni-mvp.firebaseapp.com",
     projectId: "uni-mvp",
     storageBucket: "uni-mvp.firebasestorage.app",
     messagingSenderId: "573518415288",
