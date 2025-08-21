@@ -1,175 +1,128 @@
 // src/screens/PartnerPairingScreen.js
+// Anchors: [UNI:IMPORTS] [UNI:WORDMARK] [UNI:HELPERS] [UNI:SCREEN] [UNI:STYLES] [UNI:PROP_TYPES]
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+import { View, Text, TextInput, Button, StyleSheet, Animated, Alert } from 'react-native';
+import { auth, db } from '../firebaseConfig';
 import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Alert,
-  Animated,
-  Easing,
-} from 'react-native';
-import { auth, db } from '../../firebaseConfig';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  query,
-  collection,
-  where,
-  getDocs,
+  doc, setDoc, getDoc, updateDoc, serverTimestamp,
+  query, where, getDocs, collection,
 } from 'firebase/firestore';
 
+// [UNI:WORDMARK]
+const Wordmark = ({ size = 36, dim = 0.35, style }) => (
+  <Text style={[{ fontSize: size, opacity: dim, fontWeight: '900', letterSpacing: 6 }, style]}>
+    â€¢UNIâ€¢
+  </Text>
+);
+Wordmark.propTypes = {
+  size: PropTypes.number,
+  dim: PropTypes.number,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+};
+
+// [UNI:HELPERS]
+const roomIdFor = (a, b) => [a, b].sort((x, y) => x.localeCompare(y)).join('_');
+
+// [UNI:SCREEN]
 export default function PartnerPairingScreen({ navigation }) {
-  const [myCode, setMyCode] = useState('');
-  const [inputCode, setInputCode] = useState('');
-  const [paired, setPaired] = useState(false);
-  const [roomId, setRoomId] = useState(null);
+  const me = auth.currentUser?.uid;
+  const [myCode, setMyCode] = useState('------');
+  const [partnerCode, setPartnerCode] = useState('');
+  const fade = useRef(new Animated.Value(0)).current;
 
-  // Animation ref for final logo fade
-  const finalOpacity = useRef(new Animated.Value(0)).current;
-
-  // Fetch my code once on mount
   useEffect(() => {
     (async () => {
-      const uid = auth.currentUser.uid;
-      const snap = await getDoc(doc(db, 'users', uid));
-      setMyCode(snap.data().code);
+      if (!me) return;
+      const usersRef = doc(db, 'users', me);
+      const snap = await getDoc(usersRef);
+      let code = (me.slice(-6) || '').toUpperCase();
+      if (!snap.exists()) {
+        await setDoc(usersRef, { code, pairedWith: null, updatedAt: serverTimestamp() });
+      } else {
+        const data = snap.data() || {};
+        if (data.code) code = data.code;
+        else await updateDoc(usersRef, { code, updatedAt: serverTimestamp() });
+      }
+      setMyCode(code);
     })();
-  }, []);
+  }, [me]);
 
-  // When paired: fade in • UNI • then navigate to Chat
   useEffect(() => {
-    if (!paired || !roomId) return;
-    Animated.sequence([
-      Animated.timing(finalOpacity, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.delay(500),
-    ]).start(() => {
-      navigation.replace('Chat', { roomId });
-    });
-  }, [paired, roomId]);
+    Animated.timing(fade, { toValue: 1, duration: 600, useNativeDriver: true }).start();
+  }, [fade]);
 
-  // Pairing logic: lookup partner, create room, update Firestore, trigger fade
-  const handlePair = async () => {
-    if (!inputCode.trim()) {
-      return Alert.alert('Enter Code', 'Please enter your partner’s code.');
-    }
+  const pairWithPartner = async () => {
+    const code = partnerCode.trim().toUpperCase();
+    if (!me || code.length < 3) return;
 
-    // Find partner by code
-    const q = query(
-      collection(db, 'users'),
-      where('code', '==', inputCode.trim())
-    );
-    const snaps = await getDocs(q);
-    if (snaps.empty) {
-      return Alert.alert('Not Found', 'That code does not exist.');
-    }
+    try {
+      const q = query(collection(db, 'users'), where('code', '==', code));
+      const r = await getDocs(q);
+      if (r.empty) return Alert.alert('Not found', 'No user with that code.');
 
-    const partnerUid = snaps.docs[0].id;
-    const myUid = auth.currentUser.uid;
+      let partnerUid = null;
+      r.forEach(d => { if (d.id !== me) partnerUid = d.id; });
+      if (!partnerUid) return Alert.alert('Oops', 'That code is yours. Ask your partner for theirs.');
 
-    // Deterministic room ID (sorted UIDs)
-    const rid =
-      [myUid, partnerUid].sort().join('_');
-    setRoomId(rid);
-
-    // Create room doc if it doesn't exist
-    const roomRef = doc(db, 'chatRooms', rid);
-    const roomSnap = await getDoc(roomRef);
-    if (!roomSnap.exists()) {
+      const roomId = roomIdFor(me, partnerUid);
+      const roomRef = doc(db, 'chatRooms', roomId);
       await setDoc(roomRef, {
-        members: [myUid, partnerUid],
-        createdAt: new Date(),
-      });
+        members: [me, partnerUid],
+        createdAt: serverTimestamp(),
+        turn: me,
+      }, { merge: true });
+
+      await updateDoc(doc(db, 'users', me), { pairedWith: partnerUid, lastRoomId: roomId });
+      await updateDoc(doc(db, 'users', partnerUid), { pairedWith: me, lastRoomId: roomId });
+
+      navigation.replace('Chat', { roomId });
+    } catch (e) {
+      console.error('[UNI] pair error:', e);
+      Alert.alert('Error', String(e?.message || e));
     }
-
-    // Update both users with pairedWith & roomId
-    await Promise.all([
-      updateDoc(doc(db, 'users', myUid), {
-        pairedWith: partnerUid,
-        roomId: rid,
-      }),
-      updateDoc(doc(db, 'users', partnerUid), {
-        pairedWith: myUid,
-        roomId: rid,
-      }),
-    ]);
-
-    setPaired(true);
   };
 
   return (
     <View style={styles.container}>
-      {!paired ? (
-        <>
-          <Text style={styles.label}>Your code:</Text>
-          <View style={styles.codeBox}>
-            <Text style={styles.code}>{myCode || 'Loading...'}</Text>
-          </View>
+      <Animated.View style={{ opacity: fade, alignItems: 'center', marginBottom: 24 }}>
+        <Wordmark />
+        <Text style={styles.subtitle}>Share your code with your partner:</Text>
+        <Text style={styles.codeBox}>{myCode}</Text>
+      </Animated.View>
 
-          <Text style={[styles.label, { marginTop: 30 }]}>
-            Partner’s code:
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter partner code"
-            value={inputCode}
-            onChangeText={setInputCode}
-            autoCapitalize="characters"
-          />
-
-          <Button title="Connect" onPress={handlePair} />
-        </>
-      ) : (
-        <Animated.Text
-          style={[styles.finalLogo, { opacity: finalOpacity }]}
-        >
-          • UNI •
-        </Animated.Text>
-      )}
+      <Text style={styles.label}>Enter partner code</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="e.g. A1B2C3"
+        autoCapitalize="characters"
+        maxLength={6}
+        value={partnerCode}
+        onChangeText={setPartnerCode}
+        returnKeyType="done"
+        onSubmitEditing={pairWithPartner}
+      />
+      <Button title="Pair" onPress={pairWithPartner} />
     </View>
   );
 }
 
+// [UNI:STYLES]
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
+  container: { flex: 1, padding: 20, gap: 10, justifyContent: 'center' },
+  subtitle: { marginTop: 8, color: '#666' },
   codeBox: {
-    padding: 20,
-    borderWidth: 1,
-    borderRadius: 8,
-    backgroundColor: '#f2f2f2',
+    marginTop: 6, fontSize: 28, fontWeight: '800', letterSpacing: 4,
+    paddingVertical: 6, paddingHorizontal: 12, backgroundColor: '#f5f5f5', borderRadius: 10,
   },
-  code: {
-    fontSize: 32,
-    letterSpacing: 4,
-  },
-  input: {
-    borderWidth: 1,
-    padding: 12,
-    borderRadius: 8,
-    marginVertical: 20,
-    fontSize: 16,
-    width: '80%',
-  },
-  finalLogo: {
-    fontSize: 72,
-    textAlign: 'center',
-  },
+  label: { marginTop: 8, fontSize: 14, color: '#444' },
+  input: { borderWidth: 1, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: '#fff' },
 });
+
+// [UNI:PROP_TYPES]
+PartnerPairingScreen.propTypes = {
+  navigation: PropTypes.shape({
+    replace: PropTypes.func.isRequired,
+  }).isRequired,
+};
