@@ -50,7 +50,7 @@ export default function PartnerPairingScreen({ navigation }) {
   }, [me]);
 
   useEffect(() => {
-    Animated.timing(fade, { toValue: 1, duration: 600, useNativeDriver: true }).start();
+  Animated.timing(fade, { toValue: 1, duration: 600, useNativeDriver: false }).start();
   }, [fade]);
 
   const pairWithPartner = async () => {
@@ -68,14 +68,39 @@ export default function PartnerPairingScreen({ navigation }) {
 
       const roomId = roomIdFor(me, partnerUid);
       const roomRef = doc(db, 'chatRooms', roomId);
+
+      // DEBUG: log identities and planned writes
+      console.log('[UNI][debug] me:', me);
+      console.log('[UNI][debug] partnerUid:', partnerUid);
+      console.log('[UNI][debug] creating/updating roomId:', roomId);
+
       await setDoc(roomRef, {
         members: [me, partnerUid],
         createdAt: serverTimestamp(),
         turn: me,
       }, { merge: true });
 
-      await updateDoc(doc(db, 'users', me), { pairedWith: partnerUid, lastRoomId: roomId });
-      await updateDoc(doc(db, 'users', partnerUid), { pairedWith: me, lastRoomId: roomId });
+      // Only update if not already paired
+      const myRef = doc(db, 'users', me);
+      const partnerRef = doc(db, 'users', partnerUid);
+
+      const mySnap = await getDoc(myRef);
+      const partnerSnap = await getDoc(partnerRef);
+
+      // DEBUG: log current user docs and planned updates
+      console.log('[UNI][debug] mySnap.exists:', mySnap.exists());
+      console.log('[UNI][debug] mySnap.data:', mySnap.exists() ? mySnap.data() : null);
+      console.log('[UNI][debug] partnerSnap.exists:', partnerSnap.exists());
+      console.log('[UNI][debug] partnerSnap.data:', partnerSnap.exists() ? partnerSnap.data() : null);
+
+      if (mySnap.exists() && mySnap.data().pairedWith !== partnerUid) {
+        console.log('[UNI][debug] updating my doc:', { pairedWith: partnerUid, lastRoomId: roomId });
+        await updateDoc(myRef, { pairedWith: partnerUid, lastRoomId: roomId });
+      }
+      if (partnerSnap.exists() && partnerSnap.data().pairedWith !== me) {
+        console.log('[UNI][debug] updating partner doc:', { pairedWith: me, lastRoomId: roomId });
+        await updateDoc(partnerRef, { pairedWith: me, lastRoomId: roomId });
+      }
 
       navigation.replace('Chat', { roomId });
     } catch (e) {

@@ -7,14 +7,9 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 
 // [UNI:HELPERS]
-const webShadow = { boxShadow: '0 10px 28px rgba(0,0,0,0.08)' };
-const nativeShadow = {
-  shadowColor: '#000',
-  shadowOpacity: 0.12,
-  shadowRadius: 12,
-  shadowOffset: { width: 0, height: 8 },
-};
-const bubbleShadow = Platform.OS === 'web' ? webShadow : nativeShadow;
+const bubbleShadow = Platform.OS === 'web'
+  ? { boxShadow: '0 10px 28px rgba(0,0,0,0.08)' }
+  : {};
 
 function bubbleColor(sentiment) {
   switch (sentiment) {
@@ -35,7 +30,7 @@ export default function BubbleMorph({ message, isSender, sentiment = 'neutral' }
   const color = bubbleColor(sentiment);
   return (
     <View style={[styles.row, { justifyContent: align }]}>
-      <View style={[styles.bubble, bubbleShadow, { backgroundColor: color, alignSelf: align }]}>
+  <View style={[styles.bubble, bubbleShadow, { backgroundColor: color, alignSelf: align }]}>
         <Text style={styles.text}>{message}</Text>
       </View>
     </View>

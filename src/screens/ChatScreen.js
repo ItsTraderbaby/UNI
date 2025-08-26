@@ -26,6 +26,7 @@ export default function ChatScreen({ route, navigation }) {
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
   const [turnUid, setTurnUid] = useState(null);
+  const [err, setErr] = useState('');
 
   // [UNI:HEADER]
   useLayoutEffect(() => { navigation.setOptions({ title: 'Chat' }); }, [navigation]);
@@ -37,7 +38,10 @@ export default function ChatScreen({ route, navigation }) {
       const data = snap.data() || {};
       setMembers(data.members || []);
       setTurnUid(data.turn || null);
-    }, (err) => console.error('[UNI] room snapshot error:', err));
+    }, (err) => {
+      console.error('[UNI] room snapshot error:', err);
+      setErr('Could not load chat room. Please check your connection or permissions.');
+    });
     return unsub;
   }, [roomId]);
 
@@ -49,7 +53,10 @@ export default function ChatScreen({ route, navigation }) {
     const unsub = onSnapshot(q, (snapshot) => {
       const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       setMessages(list);
-    }, (err) => console.error('[UNI] messages snapshot error:', err));
+    }, (err) => {
+      console.error('[UNI] messages snapshot error:', err);
+      setErr('Could not load messages. Please check your connection or permissions.');
+    });
     return unsub;
   }, [roomId]);
 
@@ -72,7 +79,7 @@ export default function ChatScreen({ route, navigation }) {
       // your message
       await addDoc(messagesRef, { text: trimmed, sender: myUid, createdAt: serverTimestamp() });
 
-      // UNI reacts (lightweight)
+      // UNI reacts (lightweight quip)
       const quip = getUNIQuip(trimmed);
       if (quip) {
         await addDoc(messagesRef, {
@@ -83,11 +90,12 @@ export default function ChatScreen({ route, navigation }) {
         });
       }
 
-      // hand over the turn
+      // switch turn
       if (partnerUid) await updateDoc(doc(db, 'chatRooms', roomId), { turn: partnerUid });
       setText('');
     } catch (e) {
       console.error('[UNI] sendMessage error:', e);
+      setErr('Failed to send message. Please try again.');
     }
   };
 
@@ -113,7 +121,9 @@ export default function ChatScreen({ route, navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
-      <BackgroundCanvas mood={mood} />
+      <BackgroundCanvas mood={mood} showLogo={false} />
+
+      {!!err && <Text style={styles.error}>{err}</Text>}
 
       <FlatList
         data={messages}
@@ -147,6 +157,7 @@ const styles = StyleSheet.create({
   systemRow: { alignItems: 'center', marginVertical: 6 },
   uniLabel: { fontWeight: '700', marginBottom: 4, color: '#555' },
   empty: { textAlign: 'center', color: '#777', marginTop: 24 },
+  error: { color: '#b00020', margin: 8, textAlign: 'center' },
   inputRow: {
     flexDirection: 'row', alignItems: 'center',
     borderTopWidth: 1, borderColor: '#e7e7e7', padding: 8, backgroundColor: '#ffffffc8',
@@ -155,7 +166,6 @@ const styles = StyleSheet.create({
   waiting: { position: 'absolute', left: 14, top: -18, fontSize: 12, color: '#666' },
 });
 
-// [UNI:PROP_TYPES]
 ChatScreen.propTypes = {
   route: PropTypes.shape({ params: PropTypes.object }).isRequired,
   navigation: PropTypes.shape({ setOptions: PropTypes.func.isRequired }).isRequired,
